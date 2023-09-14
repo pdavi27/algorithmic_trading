@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.2.2.min.js"></script>
+    <title>Stock Price Visualization</title>
+    {{ script|safe }}
+</head>
+<body>
+    <h1>Stock Price Visualization</h1>
+    <form method="POST" action="/analyze">
+        <label for="stock_tickers">Enter stock tickers (comma-separated):</label>
+        <input type="text" name="stock_tickers" id="stock_tickers">
+
+        <label for="stock_period">Enter stock period (comma-separated):</label>
+        <select name="stock_period" id="stock_period">
+            <option value="5d">5 Days</option>
+            <option value="1mo">1 Month</option>
+            <option value="3mo">3 Months</option>
+            <option value="6mo">6 Months</option>
+            <option value="1y">1 Year</option>
+            <option value="2y">2 Years</option>
+            <option value="5y">5 Years</option>
+            <option value="10y">10 Years</option>
+            <option value="ytd">Year to Date</option>
+            <option value="max">Max</option>
+        </select>
+        
+        <button type="submit">Analyze</button>
+    </form>
+    <div>
+        {{ div|safe }}
+    </div>
+</body>
+</html>

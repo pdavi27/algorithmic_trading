@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.2.2.min.js"></script>
+    <title>Stock Analysis Results</title>
+</head>
+<body>
+    <h1>Stock Analysis Results</h1>
+    <a href="/">Back to Home</a>
+    <!-- Loop through Bokeh plots and embed them -->
+    {% for script, div in bokeh_plots %}
+        <h2>{{ script|safe }}</h2>
+        <div>{{ div|safe }}</div>
+    {% endfor %}
+    
+    <!-- Other content or results as needed -->
+</body>
+</html>
