@@ -14,7 +14,20 @@
         <h2>{{ script|safe }}</h2>
         <div>{{ div|safe }}</div>
     {% endfor %}
+
+    <!-- Display similar tickers -->
+    {% if similar_tickers %}
+        <h2>Similar Tickers:</h2>
+        <ul>
+            {% for ticker in similar_tickers %}
+                <li>{{ ticker }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No similar tickers found.</p>
+    {% endif %}
     
     <!-- Other content or results as needed -->
 </body>
 </html>
+
