@@ -11,7 +11,7 @@ import numpy as np
 
 app = Flask(__name__)
 
-uri = "mongodb+srv://admin:Trader01D@testingcluster.45vrcox.mongodb.net/?retryWrites=true&w=majority"
+uri = "[mongoDB_URL]"
 
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client['stock_data']
