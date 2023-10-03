@@ -6,8 +6,8 @@ from bokeh.models import NumeralTickFormatter
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import CountVectorizer
+from fastdtw import fastdtw
+import numpy as np
 
 app = Flask(__name__)
 
@@ -75,35 +75,40 @@ def analyze():
     # Handle cases where the request method is not POST (e.g., GET request)
     return render_template('index.html')
 
-def find_similar_tickers(selected_tickers, selected_period):
-    # Retrieve data from MongoDB for selected tickers
+def find_similar_tickers(entered_tickers, selected_period):
+    # Retrieve data from MongoDB for all tickers in the database for the selected period
+    all_tickers_data = collection.find({'period': selected_period})
+
+    # Extract ticker names and close price data from the database
+    ticker_names = []
     ticker_data = []
-    for ticker in selected_tickers:
-        existing_data = collection.find_one({'ticker': ticker, 'period': selected_period})
-        if existing_data:
-            ticker_data.append(existing_data['close_price'])
+    for data in all_tickers_data:
+        ticker_names.append(data['ticker'])
+        ticker_data.append(data['close_price'])
 
     if len(ticker_data) < 2:
-        print("Not enough data")
-        return []  # Not enough data to calculate similarity
-    
-    # Convert ticker_data to a list of strings
-    ticker_data_strings = [" ".join(map(str, data)) for data in ticker_data]
-    
-    # Calculate similarity between tickers using cosine similarity
-    vectorizer = CountVectorizer()
-    X = vectorizer.fit_transform(ticker_data_strings)
-    similarity_matrix = cosine_similarity(X)
-    
-    # Get the indices of the most similar tickers (excluding the input tickers)
-    similar_indices = []
-    for i in range(len(similarity_matrix)):
-        similar_indices.extend(list(reversed(similarity_matrix[i].argsort()))[1:6])  # Exclude the current ticker
-    
-    # Get the names of the most similar tickers
-    similar_tickers = list(set([selected_tickers[i] for i in similar_indices]))
-    
-    return(similar_tickers)
+        return []  # Not enough data in the database to calculate similarity
+
+    # Initialize a list to store similar tickers for each entered ticker
+    similar_tickers = []
+
+    for entered_ticker in entered_tickers:
+        # Find the index of the entered ticker in the list of ticker names
+        entered_ticker_index = ticker_names.index(entered_ticker)
+
+        # Calculate DTW distance between the entered ticker and all other tickers
+        distances = []
+        for i, data in enumerate(ticker_data):
+            if i != entered_ticker_index:
+                # Use fastdtw to calculate DTW distance
+                distance, _ = fastdtw(np.array(ticker_data[entered_ticker_index]), np.array(data))
+                distances.append((ticker_names[i], distance))
+
+        # Sort by DTW distance and get the top 5 most similar tickers
+        distances.sort(key=lambda x: x[1])
+        similar_tickers.append([ticker[0] for ticker in distances[:5]])
+
+    return similar_tickers
 
 if __name__ == '__main__':
     app.run(debug=True)
