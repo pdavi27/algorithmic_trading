@@ -13,7 +13,11 @@ from scipy.spatial.distance import euclidean
 
 app = Flask(__name__)
 
+<<<<<<< HEAD
 uri = "mongodb+srv://admin2:Trades123@testingcluster.45vrcox.mongodb.net/?retryWrites=true&w=majority"
+=======
+uri = "[mongoDB_URL]"
+>>>>>>> 86dc6afb7592c4a6e4589e7669ccdce3b211d44d
 
 client = MongoClient(uri, server_api=ServerApi('1'))
 
