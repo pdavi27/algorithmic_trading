@@ -5,29 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.2.2.min.js"></script>
     <title>Stock Analysis Results</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #e8491d 3px solid;
+        }
+
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        header ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        header ul li {
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+
+        header #branding {
+            float: left;
+        }
+
+        header #branding h1 {
+            margin: 0;
+        }
+
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+
+        header .highlight, header .current a {
+            color: #e8491d;
+            font-weight: bold;
+        }
+
+        header a:hover {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        h2, h3 {
+            color: #333;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul li {
+            padding: 5px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        p, li {
+            font-size: 18px;
+        }
+
+        .bokeh-plot {
+            border: 1px solid #eaeaea;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #fff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Stock Analysis Results</h1>
-    <a href="/">Back to Home</a>
-    <!-- Loop through Bokeh plots and embed them -->
-    {% for script, div in bokeh_plots %}
-        <h2>{{ script|safe }}</h2>
-        <div>{{ div|safe }}</div>
-    {% endfor %}
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>Stock Analysis Results</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Back to Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <!-- Loop through Bokeh plots and embed them -->
+        {% for script, div in bokeh_plots %}
+            <h2>{{ script|safe }}</h2>
+            <div>{{ div|safe }}</div>
+        {% endfor %}
 
-    <!-- Display similar tickers -->
-    {% if similar_tickers %}
-        <h2>Similar Tickers:</h2>
-        <ul>
-            {% for ticker in similar_tickers %}
-                <li>{{ ticker }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No similar tickers found.</p>
-    {% endif %}
-    
-    <!-- Other content or results as needed -->
+        <!-- Display similar tickers -->
+        {% if similar_tickers %}
+            <h2>Similar Tickers:</h2>
+            <ul>
+                {% for ticker in similar_tickers %}
+                    <li>{{ ticker }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No similar tickers found.</p>
+        {% endif %}
+        
+        {% if avgVolume %}
+            <h3>Average Volume:</h3>
+            <p>{{ avgVolume }}</p>
+        {% else %}
+            <p>No Volume Reported.</p>
+        {% endif %}
+        {% if maxHigh %}
+            <h3>High:</h3>
+            <p>{{ maxHigh }}</p>
+        {% else %}
+            <p>No High Reported.</p>
+        {% endif %}  
+        {% if minLow %}
+            <h3>Low:</h3>
+            <p>{{ minLow }}</p>
+        {% else %}
+            <p>No Low Reported.</p>
+        {% endif %}  
+        
+        <!-- Display sentiment rating -->
+        {% if sentiment_rating %}
+            <h2>Sentiment Rating:</h2>
+            <p>{{ sentiment_rating }}</p>
+        {% else %}
+            <p>No sentiment rating available.</p>
+        {% endif %}
+        
+        <!-- Display news articles -->
+        <h2>Related News Articles:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date and Time</th>
+                    <th>Headline</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in news_articles %}
+                <tr>
+                    <td>{{ article.date_time }}</td>
+                    <td><a href="{{ article.link }}" target="_blank">{{ article.headline }}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
-
